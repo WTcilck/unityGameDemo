@@ -5,7 +5,7 @@ using UnityEngine;
 public class SeniorTrigger : MonoBehaviour
 {
     public Player player;
-    public Text hpText;
+    // public Text hpText;
     // Start is called before the first frame update
     void Start()
     {

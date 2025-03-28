@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public float moveSpeed;
     // 输入信号值
     public float Dup;
-    public float Ddown;
+    public float Dright;
 
     // 平滑输入值
     private float targetDup;
@@ -78,6 +78,13 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            
+        }
+    }
+
+    void Boom() {
+        boomRestNum--;
         
     }
 }

@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Award
+  - Bullet
+  - Enemy
+  - PlayerSenior
   layers:
   - Default
   - TransparentFX
@@ -44,9 +48,12 @@ TagManager:
   - name: BackGround
     uniqueID: 1209164539
     locked: 0
-  - name: Player
+  - name: Unit
     uniqueID: 420475255
     locked: 0
   - name: UI
     uniqueID: 1566326441
+    locked: 0
+  - name: Foreground
+    uniqueID: 4279830219
     locked: 0
