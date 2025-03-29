@@ -39,16 +39,18 @@ public class Enemy : MonoBehaviour
             Destroy(this.gameObject);
         }
         if (isDead) {
+            // 播放爆炸动画
             timer += Time.deltaTime;
             int frame = (int)(timer / (1.0f / fps));
             SR.sprite = sprites[frame];
+
             if (frame == sprites.Length - 1) {
                 if (type == EnemyType.enemy0) {
-                    GameManager._insance.score += 1;
+                    GameManager._instance.score += 1;
                 } else if (type == EnemyType.enemy1) {
-                    GameManager.insance.score += 2;
+                    GameManager._instance.score += 2;
                 } else if (type == EnemyType.enemy2) {
-                    GameManager.insance.score += 5;
+                    GameManager._instance.score += 5;
                 }
                 Destroy(this.gameObject);
             }

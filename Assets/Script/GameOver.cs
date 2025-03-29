@@ -36,9 +36,9 @@ public class GameOver : MonoBehaviour
             PlayerPrefs.SetFloat("highestScore", currentScore);//修改最高分
         }
         //分数显示
-        highestScoreText.text = highestScore + "";
+        highScoreText.text = highestScore + "";
         currentScoreText.text = currentScore + "";
 
-        Camera.main.GetComponent<AudioSource>().Stop();//BGM停止
+        // Camera.main.GetComponent<AudioSource>().Stop();//BGM停止
     }
 }

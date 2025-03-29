@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
 
     // 大招冷却时间
     public float superWeaponTime = 15;
-    public float restSuperWeaponTime;
+    private float restSuperWeaponTime;
 
     // 武器数量
     public int weaponCount = 1;
@@ -49,16 +49,16 @@ public class Player : MonoBehaviour
 
     public int hp;
     public int boomRestNum;
-    // public Text boomText;
+    public Text boomText;
 
-    public AudioSource[] audioList;
+    // public AudioSource[] audioList;
 
     void Awake() {
         gunTop = GameObject.Find("Gun Top").GetComponent<Gun>();
         gunLeft = GameObject.Find("Gun Left").GetComponent<Gun>();
         gunRight = GameObject.Find("Gun Right").GetComponent<Gun>();
-        audioList = GetComponents<AudioSource>();
-        // boomText = GameObject.Find("BoomText").GetComponent<Text>();
+        // audioList = GetComponents<AudioSource>();
+        boomText = GameObject.Find("RestNum").GetComponent<Text>();
         Dup = 0;
         Dright = 0;
     }
@@ -72,19 +72,112 @@ public class Player : MonoBehaviour
         restSuperWeaponTime = superWeaponTime;
         superWeaponTime = 0;
         boomRestNum = 0;
-        // boomText.Text = "X 0";
+        boomText.text = "X 0";
     }
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space)) {
-            
+            Boom();
         }
+        if (canPlayAnimation) {
+            timer += Time.deltaTime;
+            // 1/fps=一帧所需时间 (timer/一帧所需时间)再取整得到当前帧索引
+            int frameIndex = (int)(timer / (1f / fps)) % 2;
+            sr.sprite = sprites[frameIndex];
+        }
+        if (hp <= 0) {
+            canPlayAnimation = false;
+            timerExplode += Time.deltaTime;
+            int frameIndex = (int)(timerExplode / (1f / fps)) % 4;
+            sr.sprite = spritesExplode[frameIndex];
+
+            if (frameIndex == spritesExplode.Length - 1) {
+                GameManager._instance.gameState = GameState.End;
+                DestroyAll();
+                Time.timeScale = 0;
+                Destroy(gameObject);
+            }
+        }
+
+        targetDup = (Input.GetKey(keyUp) ? 1f : 0) - (Input.GetKey(keyDown) ? 1f : 0);
+        targetDright = (Input.GetKey(keyRight) ? 1f : 0) - (Input.GetKey(keyLeft) ? 1f : 0);
+
+        Dup = Mathf.SmoothDamp(Dup, targetDup, ref velocityDup, 0.1f);
+        Dright = Mathf.SmoothDamp(Dright, targetDright, ref velocityDright, 0.1f);
+
+        transform.Translate(new Vector3(Dright, Dup, transform.position.z) * moveSpeed * Time.deltaTime);
+
+        // 防止飞出屏幕
+        float x = Mathf.Clamp(transform.position.x, -1.8f, 1.8f);
+        float y = Mathf.Clamp(transform.position.y, -3.66f, 3.66f);
+
+        transform.position = new Vector3(x, y, transform.position.z);
+        superWeaponTime -= Time.deltaTime;
+        if (superWeaponTime > 0) {
+            if (weaponCount == 1) {
+                ToSuperWeapon();
+                Debug.Log("双管齐发");
+            }
+        } else {
+            if (weaponCount == 2) {
+                ToNormalWeapon();
+                Debug.Log("单管发射");
+            }
+        }
+    }
+
+    void ToSuperWeapon() {
+        weaponCount = 2;
+        gunTop.StopFire();
+        gunRight.OpenFire();
+        gunLeft.OpenFire();
+    }
+
+    void ToNormalWeapon() {
+        weaponCount = 1;
+        gunTop.OpenFire();
+        gunRight.StopFire();
+        gunLeft.StopFire();
+    }
+
+    void OnTriggerEnter(Collider other) {
+        if (other.tag == "Award") {
+            // audioList[0].Play();
+            if (other.transform.GetComponent<Award>().type == 0) {
+                superWeaponTime = restSuperWeaponTime;
+            }
+            if (other.transform.GetComponent<Award>().type == 1) {
+                boomRestNum++;
+                boomText.text = "X " + boomRestNum;
+            }
+            Destroy(other.gameObject);
+        }
+    }
+
+    void DestroyAll() {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in enemies) {
+            Destroy(enemy.gameObject);
+        }
+        GameObject[] awards = GameObject.FindGameObjectsWithTag("Award");
+        foreach (GameObject award in awards) {
+            Destroy(award.gameObject);
+        }
+        GameObject[] bullets = GameObject.FindGameObjectsWithTag("Bullet");
+        foreach (GameObject bullet in bullets) {
+            Destroy(bullet.gameObject);
+        }
+        Destroy(GameObject.Find("Spawn").gameObject);
     }
 
     void Boom() {
         boomRestNum--;
-        
+        boomText.text = "X " + boomRestNum;
+        GameObject[] gos = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject go in gos) {
+            go.GetComponent<Enemy>().isDead = true;
+        }
     }
 }

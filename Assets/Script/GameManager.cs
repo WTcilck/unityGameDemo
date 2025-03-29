@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public enum GameState {
     Running, 
@@ -17,7 +19,7 @@ public class GameManager : MonoBehaviour
     public int highestScore;
 
     void Awake() {
-        _instance = this;
+        _instance = this;        
         gameState = GameState.Running;
     }
 
@@ -25,15 +27,44 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         score = 0;
-        scoreText = GameObject.Find("Score").GetComponent<Text>();
+        scoreText = GameObject.Find("Score").GetComponent<Text>();        
     }
 
     // Update is called once per frame
     void Update()
     {
-        scoreText.Text = "Score: " + score;
+        scoreText.text = "Score: " + score;
         if (gameState == GameState.End) {
-            GameOver.
+            GameOver._instance.Show(score);
         }
+    }
+
+    // 更改游戏状态
+    public void ChangeState() {
+        if (_instance.gameState == GameState.Running) {
+            Pause();
+        } else if (_instance.gameState == GameState.Pause) {
+            Continue();
+        }
+    }
+
+    public void Pause() {
+        Time.timeScale = 0;
+        _instance.gameState = GameState.Pause;
+    }
+
+    public void Continue() {
+        Time.timeScale = 1;
+        _instance.gameState = GameState.Running;
+    }
+
+    public void Restart() {
+        Debug.Log("Restart");
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
+    }
+
+    public void Exit() {
+        Application.Quit();
     }
 }

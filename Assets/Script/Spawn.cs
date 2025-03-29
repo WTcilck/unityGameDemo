@@ -22,12 +22,43 @@ public class Spawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // 定时器 方法名，第一次调用时间s，间隔时间s
+        InvokeRepeating("CreateEnemy0", 1, rateOfCreateEnemy0);
+        InvokeRepeating("CreateEnemy1", 3, rateOfCreateEnemy1);
+        InvokeRepeating("CreateEnemy2", 6, rateOfCreateEnemy2);
+
+        InvokeRepeating("CreateAward0", 7, rateOfCreateAward0);
+        InvokeRepeating("CreateAward1", 10, rateOfCreateAward1);
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void CreateEnemy0() {
+        float x = Random.Range(-2f, 2f);
+        Instantiate(enemy0, new Vector3(x, transform.position.y, transform.position.z), Quaternion.identity);
+    }
+
+    public void CreateEnemy1() {
+        float x = Random.Range(-2f, 2f);
+        Instantiate(enemy1, new Vector3(x, transform.position.y, transform.position.z), Quaternion.identity);
+    }
+
+    public void CreateEnemy2() {
+        float x = Random.Range(-1.5f, 1.5f);
+        Instantiate(enemy2, new Vector3(x, transform.position.y, transform.position.z), Quaternion.identity);
+    }
+
+    public void CreateAward0() {
+        float x = Random.Range(-1.5f, 1.5f);
+        Instantiate(award0, new Vector3(x, transform.position.y, transform.position.z), Quaternion.identity);
+    }
+
+    public void CreateAward1() {
+        float x = Random.Range(-1.5f, 1.5f);
+        Instantiate(award1, new Vector3(x, transform.position.y, transform.position.z), Quaternion.identity);        
     }
 }
